@@ -11,6 +11,7 @@ import com.github.drakescraft_labs.infinityexpansion.items.SlimefunExtension;
 import com.github.drakescraft_labs.infinityexpansion.items.blocks.InfinityWorkbench;
 import com.github.drakescraft_labs.infinityexpansion.items.materials.Materials;
 import dev.drake.infinitylib.machines.MachineLore;
+import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
 import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItemStack;
 import com.github.drakescraft_labs.slimefun4.api.recipes.RecipeType;
 import com.github.drakescraft_labs.slimefun4.implementation.SlimefunItems;
@@ -33,8 +34,10 @@ public final class Generators {
             "INFINITY_REACTOR",
             Material.BEACON,
             "&bInfinity Reactor",
-            "&7Generates power through the compression",
-            "&7of &8Void &7and &bInfinity &7Ingots",
+            "&7Generates titanic energy through the",
+            "&7rapid compression of Void & Infinity Ingots.",
+            "&c⚠ Emits deadly environmental radiation!",
+            "&eRequires high-speed continuous fuel injection.",
             "",
             MachineLore.energyBuffer(INFINITY_REACTOR_ENERGY * 1000),
             MachineLore.energyPerSecond(INFINITY_REACTOR_ENERGY)
@@ -123,14 +126,23 @@ public final class Generators {
             MachineLore.energyPerSecond(INFINITY_ENERGY)
     );
 
+    private static ItemStack getAddonItem(String id, ItemStack fallback) {
+        SlimefunItem item = SlimefunItem.getById(id);
+        return item != null ? item.getItem() : fallback;
+    }
+
     public static void setup(InfinityExpansion plugin) {
-        new InfinityReactor(Groups.INFINITY_CHEAT, INFINITY_REACTOR, InfinityWorkbench.TYPE, new ItemStack[] {
-                null, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, null,
-                Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.VOID_INGOT, Materials.VOID_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT,
-                Materials.INFINITE_INGOT, Materials.MACHINE_PLATE, Materials.MACHINE_PLATE, Materials.MACHINE_PLATE, Materials.MACHINE_PLATE, Materials.INFINITE_INGOT,
+        ItemStack supremeCore = getAddonItem("SUPREME_SUPREME", Materials.INFINITE_CORE);
+        ItemStack thorniumEnergized = getAddonItem("SUPREME_THORNIUM_ENERGIZED", Materials.INFINITE_INGOT);
+        ItemStack cetrusLux = getAddonItem("SUPREME_CETRUS_LUX", CELESTIAL_PANEL);
+
+        new InfinityReactor(Groups.INFINITY, INFINITY_REACTOR, InfinityWorkbench.TYPE, new ItemStack[] {
+                thorniumEnergized, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, thorniumEnergized,
+                Materials.INFINITE_INGOT, supremeCore, Materials.VOID_INGOT, Materials.VOID_INGOT, supremeCore, Materials.INFINITE_INGOT,
+                Materials.INFINITE_INGOT, Materials.MACHINE_PLATE, Materials.NETHERITE_SINGULARITY, Materials.MAGIC_SINGULARITY, Materials.MACHINE_PLATE, Materials.INFINITE_INGOT,
                 Materials.INFINITE_INGOT, Materials.MACHINE_PLATE, SlimefunExtension.ADVANCED_NETHER_STAR_REACTOR, SlimefunExtension.ADVANCED_NETHER_STAR_REACTOR, Materials.MACHINE_PLATE, Materials.INFINITE_INGOT,
                 Materials.INFINITE_INGOT, Materials.MACHINE_PLATE, Materials.MACHINE_PLATE, Materials.MACHINE_PLATE, Materials.MACHINE_PLATE, Materials.INFINITE_INGOT,
-                Materials.INFINITE_INGOT, Materials.INFINITE_CIRCUIT, Materials.INFINITE_CORE, Materials.INFINITE_CORE, Materials.INFINITE_CIRCUIT, Materials.INFINITE_INGOT
+                thorniumEnergized, Materials.INFINITE_CIRCUIT, Materials.INFINITE_CORE, Materials.INFINITE_CORE, Materials.INFINITE_CIRCUIT, thorniumEnergized
         }, INFINITY_REACTOR_ENERGY).register(plugin);
 
         new EnergyGenerator(Groups.BASIC_MACHINES, HYDRO, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
@@ -177,9 +189,9 @@ public final class Generators {
                 Materials.MAGNONIUM, Materials.MAGNONIUM, Materials.MAGNONIUM
         }, VOID_ENERGY, GenerationType.LUNAR).register(plugin);
 
-        new EnergyGenerator(Groups.INFINITY_CHEAT, INFINITE_PANEL, InfinityWorkbench.TYPE, new ItemStack[] {
-                CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL,
-                CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL,
+        new EnergyGenerator(Groups.INFINITY, INFINITE_PANEL, InfinityWorkbench.TYPE, new ItemStack[] {
+                cetrusLux, CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL, CELESTIAL_PANEL, cetrusLux,
+                CELESTIAL_PANEL, Materials.VOID_GLASS, Materials.VOID_GLASS, Materials.VOID_GLASS, Materials.VOID_GLASS, CELESTIAL_PANEL,
                 Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT,
                 Materials.INFINITE_INGOT, Materials.INFINITE_CIRCUIT, Materials.INFINITE_CORE, Materials.INFINITE_CORE, Materials.INFINITE_CIRCUIT, Materials.INFINITE_INGOT,
                 Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT, Materials.INFINITE_INGOT,

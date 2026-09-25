@@ -38,7 +38,7 @@ public final class Groups {
             new CustomItemStack(Material.NETHER_STAR, "&5Multiverse &7Expansion"), 3,
             MAIN_MATERIALS, BASIC_MACHINES, ADVANCED_MACHINES, STORAGE, MOB_SIMULATION, INFINITY_MATERIALS, INFINITY);
     public static final ItemGroup INFINITY_CHEAT = new SubGroup("infinity_cheat",
-            new CustomItemStack(Material.RESPAWN_ANCHOR, "&bInfinity &7Recipes &c- INCORRECT RECIPES"));
+            new CustomItemStack(Material.RESPAWN_ANCHOR, "&bInfinity &7Technical Recipes"));
 
     public static void setup(InfinityExpansion inst) {
         INFINITY.register(inst);

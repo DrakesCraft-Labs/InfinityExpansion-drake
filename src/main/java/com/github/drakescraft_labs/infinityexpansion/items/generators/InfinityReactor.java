@@ -12,6 +12,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import com.github.drakescraft_labs.slimefun4.core.attributes.ProtectionType;
+import com.github.drakescraft_labs.slimefun4.api.player.PlayerProfile;
 import com.github.drakescraft_labs.infinityexpansion.utils.Util;
 import com.github.drakescraft_labs.infinityexpansion.items.materials.Materials;
 import dev.drake.infinitylib.common.StackUtils;
@@ -36,8 +42,9 @@ import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.DirtyChestMenu
 @ParametersAreNonnullByDefault
 public final class InfinityReactor extends MenuBlock implements EnergyNetProvider, RecipeDisplayItem {
 
-    private static final int INFINITY_INTERVAL = 196000;
-    private static final int VOID_INTERVAL = 32000;
+    // Exponentially accelerated fuel burn: 2 minutes for Infinity Ingot, 30 seconds for Void Ingot
+    private static final int INFINITY_INTERVAL = 2400;
+    private static final int VOID_INTERVAL = 600;
     private static final int[] INPUT_SLOTS = { 10, 16 };
     private static final int STATUS_SLOT = 13;
 
@@ -188,6 +195,23 @@ public final class InfinityReactor extends MenuBlock implements EnergyNetProvide
 
         //generate
 
+        // Emit active cosmic radiation pulse to nearby unprotected players
+        if (l.getWorld() != null && Math.floorMod(progress, 10) == 0) {
+            for (Player p : l.getWorld().getPlayers()) {
+                if (p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR) continue;
+                if (p.getLocation().distanceSquared(l) <= 64.0) { // 8 blocks
+                    PlayerProfile.get(p, profile -> {
+                        if (profile != null && !profile.hasFullProtectionAgainst(ProtectionType.RADIATION)) {
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 80, 1));
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, 1));
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 100, 0));
+                            p.damage(2.0); // 1 heart environmental radiation damage
+                        }
+                    });
+                }
+            }
+        }
+
         if (inv.hasViewer()) {
             inv.replaceExistingItem(STATUS_SLOT, new CustomItemStack(Material.LIME_STAINED_GLASS_PANE,
                             "&aGenerating...",
@@ -211,12 +235,14 @@ public final class InfinityReactor extends MenuBlock implements EnergyNetProvide
         List<ItemStack> items = new ArrayList<>();
 
         ItemStack item = new CustomItemStack(Materials.INFINITE_INGOT, Materials.INFINITE_INGOT.getDisplayName(),
-                "", ChatColor.GOLD + "Lasts for 1 day");
+                "", ChatColor.GOLD + "Lasts for 2 minutes (2,400 ticks)",
+                ChatColor.RED + "Emits deadly cosmic radiation!");
         items.add(item);
         items.add(null);
 
         item = new CustomItemStack(Materials.VOID_INGOT, Materials.VOID_INGOT.getDisplayName(),
-                ChatColor.GOLD + "Lasts for 4 hours");
+                "", ChatColor.GOLD + "Lasts for 30 seconds (600 ticks)",
+                ChatColor.RED + "Continuous injection required");
         items.add(item);
         items.add(null);
 
