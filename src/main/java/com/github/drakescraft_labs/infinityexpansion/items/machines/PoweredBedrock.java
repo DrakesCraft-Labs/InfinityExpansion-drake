@@ -38,7 +38,7 @@ public final class PoweredBedrock extends SlimefunItem implements EnergyNetCompo
 
             @Override
             public void tick(Block b, SlimefunItem item, Config data) {
-                if (InfinityExpansion.slimefunTickCount() % 8 == 0) {
+                if (InfinityExpansion.slimefunTickCount() % 8 != 0) {
                     return;
                 }
                 Location l = b.getLocation();
