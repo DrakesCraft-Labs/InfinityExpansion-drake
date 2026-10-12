@@ -18,6 +18,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import com.github.drakescraft_labs.slimefun4.core.attributes.ProtectionType;
 import com.github.drakescraft_labs.slimefun4.api.player.PlayerProfile;
+import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.infinityexpansion.utils.Util;
 import com.github.drakescraft_labs.infinityexpansion.items.materials.Materials;
 import dev.drake.infinitylib.common.StackUtils;
@@ -202,10 +203,14 @@ public final class InfinityReactor extends MenuBlock implements EnergyNetProvide
                 if (p.getLocation().distanceSquared(l) <= 64.0) { // 8 blocks
                     PlayerProfile.get(p, profile -> {
                         if (profile != null && !profile.hasFullProtectionAgainst(ProtectionType.RADIATION)) {
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 80, 1));
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, 1));
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 100, 0));
-                            p.damage(2.0); // 1 heart environmental radiation damage
+                            // Generators tick on the async energy net thread; effects and damage must run on the main thread
+                            Slimefun.runSync(() -> {
+                                if (!p.isOnline() || p.isDead()) return;
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 80, 1));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 80, 1));
+                                p.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 100, 0));
+                                p.damage(2.0); // 1 heart environmental radiation damage
+                            });
                         }
                     });
                 }
