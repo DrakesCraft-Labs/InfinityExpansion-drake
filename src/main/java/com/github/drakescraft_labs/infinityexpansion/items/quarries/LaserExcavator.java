@@ -26,7 +26,6 @@ import com.github.drakescraft_labs.slimefun4.utils.ChestMenuUtils;
 import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.BlockMenu;
 import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.BlockMenuPreset;
 import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.DirtyChestMenu;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
 /**
  * High-tech Laser Excavator inspired by modular quarry mechanics.
@@ -39,6 +38,8 @@ public final class LaserExcavator extends AbstractMachineBlock implements Recipe
 
     private static final int INTERVAL =
             InfinityExpansion.config().getInt("quarry-options.laser-excavator.ticks-per-output", 1, 100);
+    private static final boolean VISUAL_EFFECTS =
+            InfinityExpansion.config().getBoolean("quarry-options.laser-excavator.visual-effects", true);
 
     private static final ItemStack DRILLING = new CustomItemStack(Material.LIME_STAINED_GLASS_PANE, "&aLaser Drilling...");
     private static final ItemStack LENS_INFO = new CustomItemStack(
@@ -217,17 +218,18 @@ public final class LaserExcavator extends AbstractMachineBlock implements Recipe
     }
 
     private void spawnLaserParticles(Block b, LaserLens lens) {
-        // Machines tick on Slimefun's async ticker; getNearbyPlayers fails Paper's main thread check there
+        if (!VISUAL_EFFECTS) {
+            return;
+        }
+
+        // The Slimefun ticker is asynchronous. Use this addon's scheduler rather than
+        // Slimefun's internal one, and never inspect nearby entities from the ticker.
         if (!Bukkit.isPrimaryThread()) {
-            Slimefun.runSync(() -> spawnLaserParticles(b, lens));
+            Bukkit.getScheduler().runTask(InfinityExpansion.instance(), () -> spawnLaserParticles(b, lens));
             return;
         }
 
         try {
-            if (b.getWorld().getNearbyPlayers(b.getLocation(), 16).isEmpty()) {
-                return;
-            }
-
             double x = b.getX() + 0.5;
             double y = b.getY() - 0.2;
             double z = b.getZ() + 0.5;

@@ -44,6 +44,8 @@ quarry-options:
     base-speed: 4
     energy-per-tick: 1200
     energy-capacity: 10000
+    # Particle feedback is safe to disable immediately if a visual issue is reported.
+    visual-effects: true
 
   # Enable/Disable resources from being produced
   resources:
