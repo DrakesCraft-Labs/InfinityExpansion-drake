@@ -27,7 +27,7 @@ import dev.drake.infinitylib.common.Scheduler;
 import dev.drake.infinitylib.core.AbstractAddon;
 import org.bstats.bukkit.Metrics;
 
-public final class InfinityExpansion extends AbstractAddon {
+public class InfinityExpansion extends AbstractAddon {
 
     public InfinityExpansion(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file,
