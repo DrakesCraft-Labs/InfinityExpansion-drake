@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -25,6 +26,7 @@ import com.github.drakescraft_labs.slimefun4.utils.ChestMenuUtils;
 import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.BlockMenu;
 import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.BlockMenuPreset;
 import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.DirtyChestMenu;
+import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
 /**
  * High-tech Laser Excavator inspired by modular quarry mechanics.
@@ -215,6 +217,12 @@ public final class LaserExcavator extends AbstractMachineBlock implements Recipe
     }
 
     private void spawnLaserParticles(Block b, LaserLens lens) {
+        // Machines tick on Slimefun's async ticker; getNearbyPlayers fails Paper's main thread check there
+        if (!Bukkit.isPrimaryThread()) {
+            Slimefun.runSync(() -> spawnLaserParticles(b, lens));
+            return;
+        }
+
         try {
             if (b.getWorld().getNearbyPlayers(b.getLocation(), 16).isEmpty()) {
                 return;
