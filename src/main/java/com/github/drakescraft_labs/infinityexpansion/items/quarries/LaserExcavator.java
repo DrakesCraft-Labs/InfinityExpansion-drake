@@ -101,7 +101,7 @@ public final class LaserExcavator extends AbstractMachineBlock implements Recipe
     @Override
     protected void setup(@Nonnull BlockMenuPreset blockMenuPreset) {
         blockMenuPreset.drawBackground(new int[] {
-                0, 1, 2, 3, 5, 6, 7, 8, 45, 46, 47, 51, 52, 53
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 45, 46, 47, 51, 52, 53
         });
         blockMenuPreset.addItem(48, LENS_INFO, ChestMenuUtils.getEmptyClickHandler());
         blockMenuPreset.addItem(50, LENS_INFO, ChestMenuUtils.getEmptyClickHandler());
